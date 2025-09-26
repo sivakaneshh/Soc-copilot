@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+pydantic
+elasticsearch
+redis
+python-dotenv
+spacy
+reportlab
