@@ -1,0 +1,61 @@
+[
+  {
+    "@timestamp": "2024-09-26T10:30:00Z",
+    "log_type": "authentication",
+    "event_type": "login_attempt",
+    "user": "admin",
+    "source_ip": "192.168.1.100",
+    "status": "failed",
+    "message": "User admin login attempt failed from 192.168.1.100",
+    "severity": "warning",
+    "service": "ssh"
+  },
+  {
+    "@timestamp": "2024-09-26T10:25:00Z",
+    "log_type": "network",
+    "event_type": "connection",
+    "source_ip": "10.0.0.50",
+    "dest_ip": "203.45.67.89",
+    "port": 443,
+    "protocol": "TCP",
+    "bytes_in": 15420,
+    "bytes_out": 8750,
+    "message": "Suspicious network activity detected - high data transfer",
+    "severity": "warning"
+  },
+  {
+    "@timestamp": "2024-09-26T10:20:00Z",
+    "log_type": "system",
+    "event_type": "file_access",
+    "host": "server1",
+    "user": "root",
+    "file_path": "/etc/passwd",
+    "action": "modified",
+    "message": "Critical system file /etc/passwd was modified",
+    "severity": "error"
+  },
+  {
+    "@timestamp": "2024-09-26T10:15:00Z",
+    "log_type": "authentication",
+    "event_type": "login_attempt",
+    "user": "jdoe",
+    "source_ip": "192.168.1.105",
+    "status": "success",
+    "message": "User jdoe successfully logged in",
+    "severity": "info",
+    "service": "web"
+  },
+  {
+    "@timestamp": "2024-09-26T10:10:00Z",
+    "log_type": "network",
+    "event_type": "connection",
+    "source_ip": "192.168.1.200",
+    "dest_ip": "8.8.8.8",
+    "port": 53,
+    "protocol": "UDP",
+    "bytes_in": 512,
+    "bytes_out": 128,
+    "message": "DNS query to external server",
+    "severity": "info"
+  }
+]

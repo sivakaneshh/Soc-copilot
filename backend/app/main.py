@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import converse, reports
+from app.api import converse, reports, logs
 
 app = FastAPI(title="SOC Copilot", description="AI-powered Security Operations Center Assistant")
 
@@ -15,6 +15,7 @@ app.add_middleware(
 
 app.include_router(converse.router, prefix="/converse", tags=["converse"])
 app.include_router(reports.router, prefix="/reports", tags=["reports"])
+app.include_router(logs.router, prefix="/logs", tags=["logs"])
 
 @app.get("/health")
 def health():

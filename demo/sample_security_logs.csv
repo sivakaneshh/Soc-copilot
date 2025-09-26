@@ -1,0 +1,9 @@
+timestamp,log_type,event_type,user,source_ip,status,message,severity,service
+2024-09-26T11:30:00Z,authentication,login_attempt,admin,192.168.1.100,failed,Admin login failed from suspicious IP,warning,ssh
+2024-09-26T11:25:00Z,authentication,login_attempt,user1,192.168.1.101,success,User1 logged in successfully,info,web
+2024-09-26T11:20:00Z,network,connection,,,,"High bandwidth usage detected on port 443",warning,
+2024-09-26T11:15:00Z,system,process_start,root,,"Service apache2 started by root",info,
+2024-09-26T11:10:00Z,authentication,logout,user2,192.168.1.102,success,User2 logged out,info,web
+2024-09-26T11:05:00Z,system,file_access,admin,,"Configuration file modified: /etc/nginx/nginx.conf",warning,
+2024-09-26T11:00:00Z,network,firewall,,,,"Blocked connection attempt from 203.0.113.5",error,
+2024-09-26T10:55:00Z,authentication,password_change,user3,192.168.1.103,success,Password changed successfully,info,web
