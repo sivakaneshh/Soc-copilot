@@ -5,7 +5,11 @@ import logging
 
 # Initialize Elasticsearch client
 es_url = os.getenv("ELASTICSEARCH_URL", "http://elasticsearch:9200")
-es = Elasticsearch([es_url])
+es = Elasticsearch(
+    [es_url],
+    # Force compatibility with Elasticsearch 8.x
+    headers={"Accept": "application/vnd.elasticsearch+json; compatible-with=8"}
+)
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +20,7 @@ def run_query(index: str, dsl: Dict[str, Any]) -> Dict[str, Any]:
         if index == "security-logs":
             index = "security-logs-*"
         
-        result = es.search(index=index, body=dsl)
+        result = es.search(index=index, **dsl)
         return result
     except Exception as e:
         logger.error(f"Error executing query: {str(e)}")
@@ -26,54 +30,82 @@ def run_query(index: str, dsl: Dict[str, Any]) -> Dict[str, Any]:
 def index_logs(index_name: str, logs: List[Dict[str, Any]]) -> int:
     """Index logs to Elasticsearch"""
     try:
-        # Create index mapping for security logs
-        mapping = {
-            "mappings": {
-                "properties": {
-                    "@timestamp": {"type": "date"},
-                    "log_type": {"type": "keyword"},
-                    "event_type": {"type": "keyword"},
-                    "user": {"type": "keyword"},
-                    "source_ip": {"type": "ip"},
-                    "dest_ip": {"type": "ip"},
-                    "port": {"type": "integer"},
-                    "severity": {"type": "keyword"},
-                    "message": {"type": "text"},
-                    "status": {"type": "keyword"},
-                    "host": {"type": "keyword"}
+        logger.info(f"Attempting to index {len(logs)} logs to index {index_name}")
+        
+        # Create index if it doesn't exist (with minimal mapping)
+        if not es.indices.exists(index=index_name):
+            logger.info(f"Creating new index: {index_name}")
+            # Use minimal mapping to avoid conflicts
+            mapping = {
+                "mappings": {
+                    "properties": {
+                        "@timestamp": {"type": "date"},
+                        "message": {"type": "text"}
+                    }
                 }
             }
-        }
-        
-        # Create index if it doesn't exist
-        if not es.indices.exists(index=index_name):
             es.indices.create(index=index_name, body=mapping)
         
         # Bulk index logs
         actions = []
-        for log in logs:
-            action = {
-                "_index": index_name,
-                "_id": log.get("_id"),
-                "_source": log
-            }
-            actions.append(action)
+        for i, log in enumerate(logs):
+            try:
+                # Clean the log data
+                log_data = {}
+                for k, v in log.items():
+                    if k != '_id' and v is not None:
+                        log_data[k] = str(v) if not isinstance(v, (dict, list)) else v
+                
+                action = {
+                    "_index": index_name,
+                    "_source": log_data
+                }
+                
+                # Only add _id if it exists and is not None/empty
+                if log.get("_id") and log["_id"].strip():
+                    action["_id"] = log["_id"]
+                    
+                actions.append(action)
+                
+            except Exception as log_error:
+                logger.error(f"Error processing log {i}: {str(log_error)}")
+                continue
         
         if actions:
+            logger.info(f"Bulk indexing {len(actions)} documents")
             from elasticsearch.helpers import bulk
-            bulk(es, actions)
-        
-        return len(logs)
+            success_count, failed_items = bulk(es, actions, raise_on_error=False)
+            logger.info(f"Successfully indexed {success_count} documents")
+            if failed_items:
+                logger.warning(f"Failed to index some documents: {failed_items}")
+            return success_count
+        else:
+            logger.warning("No valid actions to index")
+            return 0
     
     except Exception as e:
         logger.error(f"Error indexing logs: {str(e)}")
+        logger.error(f"Exception type: {type(e)}")
+        # Try to provide more debug info
+        try:
+            logger.error(f"Elasticsearch info: {es.info()}")
+        except:
+            logger.error("Cannot get Elasticsearch info")
         raise e
 
 def get_indices_stats() -> List[Dict[str, Any]]:
     """Get statistics for all security log indices"""
     try:
-        indices = es.indices.get("security-logs-*")
-        stats = es.indices.stats("security-logs-*")
+        # First check if any security indices exist
+        try:
+            indices = es.indices.get(index="security-logs-*")
+            stats = es.indices.stats(index="security-logs-*")
+        except Exception as e:
+            if "index_not_found_exception" in str(e).lower():
+                # No indices found yet
+                return []
+            else:
+                raise e
         
         result = []
         for index_name in indices.keys():

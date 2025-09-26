@@ -31,6 +31,12 @@ def converse(query: NLQuery):
         # Execute query (currently mock)
         search_result = run_query("security-logs", translation_result["dsl"])
         
+        # Convert ObjectApiResponse to dict if needed
+        if hasattr(search_result, 'body'):
+            search_result = search_result.body
+        elif not isinstance(search_result, dict):
+            search_result = dict(search_result)
+        
         # Store query for later reference
         query_data = {
             "user_id": query.user_id,

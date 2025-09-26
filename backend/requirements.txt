@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 pydantic
-elasticsearch
+elasticsearch==8.11.0
 redis
 python-dotenv
 spacy
