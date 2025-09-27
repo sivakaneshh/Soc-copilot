@@ -18,13 +18,13 @@ export default function Home() {
     <div style={{ padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
       {/* Log Upload Section */}
       <div style={{ marginBottom: '30px' }}>
-        <LogUpload onUploadSuccess={(indexName) => console.log('Logs uploaded to:', indexName)} />
+        <LogUpload onUploadSuccess={(indexName: string) => console.log('Logs uploaded to:', indexName)} />
       </div>
 
       {/* Main Dashboard */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
         <div>
-          <h2>🤖 Ask SOC Copilot</h2>
+          <h2>🤖 Ask SIEMplify</h2>
           <ChatBox onQueryResult={handleQueryResult} />
         </div>
         <div>

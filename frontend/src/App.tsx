@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>SOC Copilot</h1>
+        <h1>SIEMplify</h1>
         <p>Your AI-powered Security Operations Center Assistant</p>
       </header>
       <main>
