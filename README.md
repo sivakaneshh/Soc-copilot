@@ -1,0 +1,96 @@
+# SOC Copilot
+
+> AI-powered Security Operations Center assistant (vibecoded prototype).
+
+This repository contains a prototype SOC assistant with a FastAPI backend and a React frontend. It includes local development and Docker-based configurations to run the full stack (Elasticsearch + Redis + Kibana).
+
+## Contents
+
+- `backend/` — FastAPI app, Python dependencies in `backend/requirements.txt`.
+- `frontend/` — React app, Node dependencies in `frontend/package.json`.
+- `docker-compose.yml` — Development/devstack with `backend`, `frontend`, `redis`, `elasticsearch`, and `kibana` services.
+- `demo/` — sample logs for experimenting.
+
+## Quick start (recommended)
+
+Run the full stack (backend, frontend, and required services) with Docker Compose:
+
+```bash
+docker-compose up --build
+```
+
+Open the frontend at: http://localhost:3000
+The backend API is available at: http://localhost:8000 (health: `/health`).
+
+## Local development
+
+### Backend (Python / FastAPI)
+
+Prereqs: Python 3.11+, pip
+
+From the project root:
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/Scripts/activate    # Windows PowerShell: .venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+The backend exposes routers under `/converse`, `/reports`, and `/logs` and a health endpoint at `/health`.
+
+### Frontend (React)
+
+Prereqs: Node.js (16+) and npm or yarn
+
+From the project root:
+
+```bash
+cd frontend
+npm install
+npm start
+```
+
+This launches the React dev server on http://localhost:3000 and proxies calls to the backend configured in the frontend code.
+
+## Docker (service notes)
+
+- The `backend` service is defined in `backend/Dockerfile` and runs `uvicorn app.main:app --reload --host 0.0.0.0 --port 8000`.
+- `docker-compose.yml` wires `redis` and `elasticsearch` and exposes Kibana on port 5601.
+- Persistent uploads are mounted from `./uploads` into the backend container.
+
+## Configuration
+
+- Environment variables used by Docker Compose: `ELASTICSEARCH_URL`, `REDIS_URL` (set in `docker-compose.yml`).
+- For local development, create a `.env` file in `backend/` if you need to store secrets or service URLs and load them with `python-dotenv`.
+
+## Changing the stack / Next steps (for you)
+
+Since you plan to change the stack, here are short notes to speed refactors:
+
+- If replacing the frontend (e.g., to Next.js / Svelte): update `frontend/Dockerfile`, `frontend/package.json`, and `docker-compose.yml` ports and build steps.
+- If replacing the backend (e.g., to Node/Express or a different Python framework): update `backend/Dockerfile`, `docker-compose.yml` service `build` context, and API contract docs (routes under `/converse`, `/reports`, `/logs`).
+- When changing services (Elasticsearch/Redis), update environment variables and any client code in `backend/core/` (`elastic_client.py`, `redis_store.py`).
+- Keep API compatibility in mind: the frontend expects the backend routes listed above — either maintain routes or update the frontend calls in `frontend/src/services`.
+
+## Contributing
+
+1. Create a branch for your work.
+2. Run the stack locally (see Quick start or Local development).
+3. Keep commits small and focused; update this README with any stack changes.
+
+## Useful files
+
+- [backend/Dockerfile](backend/Dockerfile) — backend container build.
+- [backend/requirements.txt](backend/requirements.txt) — Python deps.
+- [docker-compose.yml](docker-compose.yml) — devstack orchestration.
+- [frontend/package.json](frontend/package.json) — frontend deps & scripts.
+
+## License
+
+This repo contains prototype code. Add a license (e.g., MIT) if you want to open-source it.
+
+---
+
+If you'd like, I can: add a minimal `README` badge, create a `CONTRIBUTING.md`, or scaffold CI for linting and tests. Want any of those next?
