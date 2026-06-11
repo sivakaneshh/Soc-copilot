@@ -89,17 +89,6 @@ Since you plan to change the stack, here are short notes to speed refactors:
 2. Run the stack locally (see Quick start or Local development).
 3. Keep commits small and focused; update this README with any stack changes.
 
-## Useful files
-
-- [backend/Dockerfile](backend/Dockerfile) — backend container build.
-- [backend/requirements.txt](backend/requirements.txt) — Python deps.
-- [docker-compose.yml](docker-compose.yml) — devstack orchestration.
-- [frontend/package.json](frontend/package.json) — frontend deps & scripts.
-
 ## License
 
-This repo contains prototype code. Add a license (e.g., MIT) if you want to open-source it.
-
----
-
-If you'd like, I can: add a minimal `README` badge, create a `CONTRIBUTING.md`, or scaffold CI for linting and tests. Want any of those next?
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
