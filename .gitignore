@@ -54,3 +54,7 @@ yarn-error.log*
 *.swo
 .DS_Store
 Thumbs.db
+
+PRESENTATION_CHECKLIST.md
+COMPLETE_FILE_ANALYSIS.md
+DEMO_SCRIPT.md
