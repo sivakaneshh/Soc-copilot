@@ -30,6 +30,8 @@ backend/smoke_test.py
 
 # production
 /build
+uploads/
+backend/uploads/
 
 # misc
 .DS_Store
