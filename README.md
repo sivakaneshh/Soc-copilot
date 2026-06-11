@@ -74,15 +74,6 @@ This launches the React dev server on http://localhost:3000 and proxies calls to
 4. That evidence block is sent to the Hugging Face inference API together with the user question.
 5. The model returns a grounded answer that the UI shows alongside the raw query results.
 
-## Changing the stack / Next steps (for you)
-
-Since you plan to change the stack, here are short notes to speed refactors:
-
-- If replacing the frontend (e.g., to Next.js / Svelte): update `frontend/Dockerfile`, `frontend/package.json`, and `docker-compose.yml` ports and build steps.
-- If replacing the backend (e.g., to Node/Express or a different Python framework): update `backend/Dockerfile`, `docker-compose.yml` service `build` context, and API contract docs (routes under `/converse`, `/reports`, `/logs`).
-- When changing services (Elasticsearch/Redis), update environment variables and any client code in `backend/core/` (`elastic_client.py`, `redis_store.py`).
-- Keep API compatibility in mind: the frontend expects the backend routes listed above — either maintain routes or update the frontend calls in `frontend/src/services`.
-
 ## Contributing
 
 1. Create a branch for your work.
