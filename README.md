@@ -2,7 +2,7 @@
 
 > AI-powered Security Operations Center assistant (vibecoded prototype).
 
-This repository contains a prototype SOC assistant with a FastAPI backend and a React frontend. It includes local development and Docker-based configurations to run the full stack (Elasticsearch + Redis + Kibana).
+This repository contains a prototype SOC assistant with a FastAPI backend and a React frontend. It includes local development and Docker-based configurations to run the full stack (Elasticsearch + Redis + Kibana) and now uses Elasticsearch retrieval plus a Hugging Face text-generation model for RAG answers.
 
 ## Contents
 
@@ -63,7 +63,16 @@ This launches the React dev server on http://localhost:3000 and proxies calls to
 ## Configuration
 
 - Environment variables used by Docker Compose: `ELASTICSEARCH_URL`, `REDIS_URL` (set in `docker-compose.yml`).
-- For local development, create a `.env` file in `backend/` if you need to store secrets or service URLs and load them with `python-dotenv`.
+- RAG / Hugging Face variables: `HF_TOKEN`, `HF_MODEL_ID`, and `HF_FALLBACK_MODEL_ID`. Set `HF_TOKEN` to a valid Hugging Face access token and override `HF_MODEL_ID` only with a model that is available through an enabled Hugging Face provider. If your chosen model is not supported, the backend falls back to `HF_FALLBACK_MODEL_ID`.
+- For local development, create a `.env` file in `backend/` if you need to store secrets or service URLs and load them with `python-dotenv`. Docker Compose also reads `backend/.env` for the backend service.
+
+## How the RAG flow works
+
+1. The chat endpoint converts the user question into Elasticsearch DSL.
+2. Elasticsearch returns the most relevant log hits.
+3. The backend formats those hits into a compact evidence block.
+4. That evidence block is sent to the Hugging Face inference API together with the user question.
+5. The model returns a grounded answer that the UI shows alongside the raw query results.
 
 ## Changing the stack / Next steps (for you)
 

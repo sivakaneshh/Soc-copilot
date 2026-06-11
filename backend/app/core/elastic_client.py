@@ -4,7 +4,7 @@ import os
 import logging
 
 # Initialize Elasticsearch client
-es_url = os.getenv("ELASTICSEARCH_URL", "http://elasticsearch:9200")
+es_url = os.getenv("ELASTICSEARCH_URL", "http://127.0.0.1:9200")
 es = Elasticsearch(
     [es_url],
     # Force compatibility with Elasticsearch 8.x
@@ -89,9 +89,10 @@ def index_logs(index_name: str, logs: List[Dict[str, Any]]) -> int:
         # Try to provide more debug info
         try:
             logger.error(f"Elasticsearch info: {es.info()}")
-        except:
+        except Exception:
             logger.error("Cannot get Elasticsearch info")
-        raise e
+        # Fail gracefully for API endpoints: return 0 indexed documents
+        return 0
 
 def get_indices_stats() -> List[Dict[str, Any]]:
     """Get statistics for all security log indices"""

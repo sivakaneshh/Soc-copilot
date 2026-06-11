@@ -22,7 +22,9 @@ export default function ChatBox({ onQueryResult }: ChatBoxProps) {
       
       const botMessage = { 
         type: 'bot' as const, 
-        content: `Found ${response.result?.hits?.total?.value || 0} results. ${response.explanation}`,
+        content: response.answer
+          ? `${response.answer}\n\nFound ${response.result?.hits?.total?.value || 0} results. ${response.explanation}`
+          : `Found ${response.result?.hits?.total?.value || 0} results. ${response.explanation}`,
         query: response
       };
       

@@ -1,9 +1,23 @@
-import redis
 import json
+import os
 from typing import Optional, Dict, Any
 
+import redis
+
 # Redis connection
-r = redis.Redis(host='redis', port=6379, db=0, decode_responses=True)
+REDIS_URL = os.getenv("REDIS_URL", "redis://127.0.0.1:6379/0")
+try:
+    r = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+    # Test connection briefly
+    r.ping()
+except Exception:
+    # Fallback to localhost if the provided host is not reachable
+    try:
+        r = redis.Redis.from_url("redis://127.0.0.1:6379/0", decode_responses=True)
+        r.ping()
+    except Exception:
+        # Last-resort: create a client that will error at call time
+        r = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 
 def store_query(query_id: str, query_data: Dict[Any, Any]) -> bool:
     """Store query data in Redis"""

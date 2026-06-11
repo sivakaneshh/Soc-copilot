@@ -7,3 +7,4 @@ python-dotenv
 spacy
 reportlab
 python-multipart
+requests

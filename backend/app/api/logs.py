@@ -26,11 +26,16 @@ class IndexInfo(BaseModel):
 async def upload_logs(file: UploadFile = File(...)):
     """Upload security logs from JSON or CSV file"""
     try:
+        # File size limit (10MB)
+        MAX_FILE_SIZE = 10 * 1024 * 1024
+        content = await file.read()
+        
+        if len(content) > MAX_FILE_SIZE:
+            raise HTTPException(status_code=413, detail="File too large. Maximum size is 10MB.")
+
         # Generate unique index name
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         index_name = f"security-logs-{timestamp}"
-        
-        content = await file.read()
         
         # Parse file based on extension
         if file.filename.endswith('.json'):
@@ -50,6 +55,8 @@ async def upload_logs(file: UploadFile = File(...)):
             index_name=index_name
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading logs: {str(e)}")
 

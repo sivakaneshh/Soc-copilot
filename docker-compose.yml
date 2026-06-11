@@ -1,12 +1,15 @@
 services:
   backend:
     build: ./backend
+    env_file:
+      - ./backend/.env
     ports:
       - "8000:8000"
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
       - REDIS_URL=redis://redis:6379
     volumes:
+      - ./backend/app:/app/app
       - ./uploads:/app/uploads
     depends_on:
       - redis
@@ -42,7 +45,7 @@ services:
     environment:
       - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
       - xpack.security.enabled=false
-      - xpack.encryptedSavedObjects.encryptionKey=fhjskloppd678ehkdfdlliverpoolfcr
+      - xpack.encryptedSavedObjects.encryptionKey=${KIBANA_ENCRYPTION_KEY}
     ports:
       - "5601:5601"
     depends_on:
