@@ -1,6 +1,6 @@
 # SOC Copilot
 
-> AI-powered Security Operations Center assistant (vibecoded prototype).
+> AI-powered Security Operations Center assistant (prototype).
 
 This repository contains a prototype SOC assistant with a FastAPI backend and a React frontend. It includes local development and Docker-based configurations to run the full stack (Elasticsearch + Redis + Kibana) and now uses Elasticsearch retrieval plus a Hugging Face text-generation model for RAG answers.
 
